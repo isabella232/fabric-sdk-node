@@ -38,8 +38,8 @@ const ServiceAction = class {
 	}
 
 	/**
-	 * build an action that will require a signature and then be sent to the service.
-	 * @abstract
+	 * Use this method must be implemented to build an action that will
+	 * require a signature and then be sent to the service.
 	 */
 	build() {
 		throw Error('"build" method must be implemented');
@@ -79,13 +79,13 @@ const ServiceAction = class {
 	}
 
 	/**
-	 * @abstract
+	 * implementing class must implement
 	 */
 	send() {
 		throw Error('"send" method must be implemented');
 	}
 
-	/**
+	/*
 	 * return a signed proposal from the signature and the payload as bytes
 	 *
 	 * This method is not intended for use by an application. It will be used
@@ -98,13 +98,20 @@ const ServiceAction = class {
 
 		this._checkPayloadAndSignature();
 
-		return fabproto6.protos.SignedProposal.create({
+		const signedProposal = fabproto6.protos.SignedProposal.create({
 			signature: this._signature,
 			proposal_bytes: this._payload
 		});
+
+		// const signedProposal = {
+		// 	signature: this._signature,
+		// 	proposalBytes: this._payload
+		// };
+
+		return signedProposal;
 	}
 
-	/**
+	/*
 	 * return a signed envelope from the signature and the payload as bytes
 	 *
 	 * This method is not intended for use by an application. It will be used
@@ -117,10 +124,12 @@ const ServiceAction = class {
 
 		this._checkPayloadAndSignature();
 
-		return {
+		const envelope = {
 			signature: this._signature,
 			payload: this._payload
 		};
+
+		return envelope;
 	}
 
 	_checkPayloadAndSignature() {
@@ -145,14 +154,16 @@ const ServiceAction = class {
 		});
 		const signatureHeaderBuf = fabproto6.common.SignatureHeader.encode(signatureHeader).finish();
 
-		return fabproto6.common.Header.create({
+		const header = fabproto6.common.Header.create({
 			signature_header: signatureHeaderBuf,
 			channel_header: channelHeaderBuf
 		});
+
+		return header;
 	}
 
 	/**
-	 * @abstract
+	 * implementing class must implement
 	 */
 	toString() {
 		throw Error('"toString" method must be implemented');
